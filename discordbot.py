@@ -44,10 +44,10 @@ async def on_message(message):
         await message.channel.send(content)
     elif message.content == "/team":
         channel = client.get_channel(727557374415601737)
-        members = channel.members
-        random.shuffle(members)
-        harf = int(len(members)/2)
-        team = members[:harf]
+        member = channel.members
+        random.shuffle(member)
+        harf = int(len(member)/2)
+        team = member[:harf]
         for mem in team:
             await message.channel.send(mem.display_name)
 
