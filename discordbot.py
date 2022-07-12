@@ -43,7 +43,7 @@ async def on_message(message):
         content = random.choice(cointoss)
         await message.channel.send(content)
     elif message.content == "/team":
-        channel = client.get_channel(727557374415601737)
+        channel = client.get_channel(960527660327505930)
         member = channel.members
         random.shuffle(member)
         harf = int(len(member)/2)
