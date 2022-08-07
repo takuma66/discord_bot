@@ -9,5 +9,6 @@
 [Ss]cripts
 pyvenv.cfg
 .venv
+/README.md
 pip-selfcheck.json
 © 2021 GitHub, Inc.
