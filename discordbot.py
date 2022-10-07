@@ -42,14 +42,6 @@ async def on_message(message):
     elif message.content == "/coin":
         content = random.choice(cointoss)
         await message.channel.send(content)
-    elif message.content == "/team":
-        channel = client.get_channel(960527660327505930)
-        member = channel.members
-        random.shuffle(member)
-        harf = int(len(member)/2)
-        team = member[:harf]
-        for mem in team:
-            await message.channel.send(mem.display_name)
 
 # Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
