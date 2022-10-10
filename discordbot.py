@@ -1,71 +1,47 @@
-from webbrowser import get
 import discord
+from discord.ext import commands
 import random
+from call import Call
+from send_content import Content
 
 TOKEN = 'OTk2NDAzNzkwMzE4MTQ5NzEy.Gp6YKa.1-ImE1QEmdqCXra6VaKlLT9hwG9rYnJBQe-jps' # TOKENを貼り付け
 
 # 接続に必要なオブジェクトを生成
-client = discord.Client()
+bot = commands.Bot(activity=discord.Game(name='喫茶ステラと死神の蝶'), command_prefix='/')
 
-# 他の関数内で呼び出すためのグローバル変数
-# 関数内で使うときは `global [変数名]`で定義
-call_message = discord.message # 空のmessageインスタンスで初期化 
-call_num = 100
-call_title = "hoge"
-cnt = 0
-call_frag = False # Trueのとき、callコマンドで募集中
-call_users = set()
+c = Call()
 
-class call:
-    message = discord.message
-    num = 100
-    title = "hoge"
-    frag = False
-    users = set()
+content = Content()
 
-    async def respons(self, words):
-        self.message = await client.channel.send(words[2]+"をやる人を"+words[1]+"人募集してます!\n参加する人はこのメッセージにリアクションを押してください!")
-        self.frag = True
-        self.num = words[1]
-        self.title = words[2]
-    
-    async def react_add(self, payload):
-        if payload.message_id == self.message:
-            user = await client.fetch_user(payload.user_id)
-            print(str(user))
-            self.users.add(user)
-            if len(call_users) == call_num:
-                await self.message.reply("締め切りました!")
-                self.message = discord.message
-                self.frag = False
-                self.users = set()
-    
-    async def react_remove(self, payload):
-        if payload.message_id == self.message:
-            user = await client.fetch_user(payload.user_id)
-            print(str(user))
-            self.users.discard(user)
- 
-            
+@bot.event
+async def on_ready():
+    print('ログインしました')
+    print('------')
 
-random_maps = [
-    "アセント",
-    "スプリット",
-    "ヘイブン",
-    "バインド",
-    "アイスボックス",
-    "ブリーズ",
-    "フラクチャー",
-    "パール"
-]
+@bot.command()
+async def map(ctx):
+    await ctx.send(random.choice(content.get_maps()))
 
-cointoss = [
-    "表",
-    "裏"
-]
+@bot.command()
+async def coin(ctx):
+    await ctx.send(random.choice(content.get_cointoss()))
 
-guild_test_server = client.get_guild(995675672443895808)
+@bot.command()
+async def call(ctx, num: int, title: str):
+    await c.respons(ctx, num, title)
 
+@bot.event
+async def on_raw_reaction_add(payload):
+    await c.react_add(payload, bot)
+
+@bot.event
+async def on_raw_reaction_remove(payload):
+    await c.react_remove(payload, bot)
+
+
+bot.run(TOKEN)
+
+'''
 # 起動時に動作する処理
 @client.event
 async def on_ready():
@@ -88,46 +64,21 @@ async def on_message(message):
         content = random.choice(cointoss)
         await message.channel.send(content)
     elif words[0] == "/call":
-        global call_message 
-        global call_num
-        global call_title
-        global call_frag
-        call_num = int(words[1])
-        title = words[2]
-        print(call_num)
-        print(title)
-        call_message = await message.channel.send(words[2]+"をやる人を"+words[1]+"人募集してます!\n参加する人はこのメッセージにリアクションを押してください!")
-        call_frag = True
-        
+        c.print_attribute()
+        await c.respons(words, message)
+        c.print_attribute()
 
 @client.event
 async def on_raw_reaction_add(payload):
-    global call_frag
-    if call_frag:
-        global call_message 
-        global call_num
-        global call_title
-        global call_users
-        if payload.message_id == call_message.id:
-            user = await client.fetch_user(payload.user_id)
-            print(str(user))
-            call_users.add(user)
-            if len(call_users) == call_num:
-                await call_message.reply("締め切りました!")
-                call_message = discord.message
-                call_frag = False
-                call_users = set()
-
+    c.print_attribute()
+    if c.frag:
+        await c.react_add(payload)
 
 @client.event
 async def on_raw_reaction_remove(payload):
-    global call_frag
-    if call_frag:
-        global call_message 
-        global call_users
-        user = await client.fetch_user(payload.user_id)
-        call_users.discard(user)
-
+    if c.flag:
+        await c.react_remove(payload)
 
 # Botの起動とDiscordサーバーへの接続
 client.run(TOKEN)
+'''  

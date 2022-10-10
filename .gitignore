@@ -10,5 +10,6 @@
 pyvenv.cfg
 .venv
 /README.md
+command_bot.py
 pip-selfcheck.json
 © 2021 GitHub, Inc.
