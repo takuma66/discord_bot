@@ -4,7 +4,7 @@ import random
 from call import Call
 from send_content import Content
 
-TOKEN = 'OTk2NDAzNzkwMzE4MTQ5NzEy.Gp6YKa.1-ImE1QEmdqCXra6VaKlLT9hwG9rYnJBQe-jps' # TOKENを貼り付け
+TOKEN = 'paste Bot Token here'
 
 # 接続に必要なオブジェクトを生成
 bot = commands.Bot(activity=discord.Game(name='喫茶ステラと死神の蝶'), command_prefix='/')
